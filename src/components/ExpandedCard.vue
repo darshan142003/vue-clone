@@ -8,15 +8,36 @@
     <!-- Video Title -->
     <h1 class="video-title">{{ video.title }}</h1>
 
-    <!-- Views Count with commas -->
-    <p class="video-views">{{ formatNumber(video.views) }} views</p>
+    <!-- Views Count -->
+    <p class="video-views">
+      {{ video.views }} views
+      <span v-if="likeCount > 10" class="tag popular">Popular</span>
+      <span v-if="likeCount > 15" class="tag trending">Trending</span>
+    </p>
 
     <!-- Channel Name -->
     <p class="channel-name">{{ video.creator.firstname }} {{ video.creator.lastname }}</p>
 
+    <!-- Like/Dislike Buttons -->
+    <div class="like-dislike-buttons">
+      <button @click="likeVideo" class="like-button">
+        <span class="like-icon">👍</span> Like
+      </button>
+      <button @click="dislikeVideo" class="dislike-button">
+        <span class="dislike-icon">👎</span> Dislike
+      </button>
+      <p>Likes: {{ likeCount }}</p>
+    </div>
+
     <!-- Comment Section -->
     <div class="comment-section">
-      <textarea id="comment" v-model="comment" placeholder="Add a comment..." class="comment-input"></textarea>
+      <textarea v-model="comment" placeholder="Add a comment..." class="comment-input"></textarea>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="navigation-buttons">
+      <button @click="goToHome" class="home-button">Home</button>
+      <button @click="goToProfile" class="profile-button">Profile</button>
     </div>
   </div>
 
@@ -26,38 +47,41 @@
 </template>
 
 <script>
-import videoData from '../assets/videos.json'; // Import the video data
+import videoData from '../assets/videos.json'; // Import video data
 
 export default {
   name: 'ExpandedCard',
   data() {
     return {
       video: null, // Store the video data
+      likeCount: 0, // Store the like count
       comment: '', // Store the user's comment
     };
   },
   mounted() {
-    // Get the id from the route parameters
+    // Get the video id from route params and find the corresponding video
     const videoId = this.$route.params.id;
-
-    // Find the video by id
     this.video = videoData.find((video) => video.id === videoId);
-
-    // If the video is not found, handle it (optional)
-    if (!this.video) {
-      console.error('Video not found');
+    if (this.video) {
+      this.likeCount = this.video.likes || 0; // Initialize the like count from the video data
     }
   },
   methods: {
+    likeVideo() {
+      this.likeCount++;
+      this.video.likes = this.likeCount; // Update the like count in the video data
+    },
+    dislikeVideo() {
+      if (this.likeCount > 0) {
+        this.likeCount--;
+        this.video.likes = this.likeCount; // Update the like count in the video data
+      }
+    },
     goToHome() {
-      this.$router.push('/');
+      this.$router.push('/'); // Navigate to the Home page
     },
     goToProfile() {
-      this.$router.push('/profile');
-    },
-    // Format the number with commas
-    formatNumber(value) {
-      return new Intl.NumberFormat().format(value);
+      this.$router.push('/profile'); // Navigate to the Profile page
     },
   },
 };
@@ -67,34 +91,46 @@ export default {
 .expanded-card {
   padding: 20px;
   color: white;
-  background-color: #121212; /* Set the background to black */
-  margin: 40px auto; /* Added margin to add space between header and the expanded card */
+  margin: 20px auto;
   max-width: 900px;
-  border-radius: 8px;
 }
 
-/* Video Cover Image (no background) */
+/* Video Cover Image */
 .video-cover .cover-image {
-  width: 100%; /* Full width */
-  height: 400px; /* Adjust height as per preference */
+  width: 100%;
+  height: 400px;
   object-fit: cover;
   border-radius: 8px;
 }
 
-/* Video Title (Smaller font size) */
+/* Video Title */
 .video-title {
-  font-size: 22px; /* Smaller font size */
+  font-size: 24px;
   margin-top: 20px;
   font-weight: bold;
-  color: white;
-  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7); /* Added shadow for better visibility */
 }
 
-/* Views Count */
+/* Views Count with Popular and Trending Tags */
 .video-views {
   font-size: 16px;
   margin-top: 10px;
   color: #bbb;
+}
+
+.tag {
+  margin-left: 10px;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.popular {
+  background-color: #f39c12;
+  color: white;
+}
+
+.trending {
+  background-color: #e74c3c;
+  color: white;
 }
 
 /* Channel Name */
@@ -104,48 +140,67 @@ export default {
   color: #bbb;
 }
 
+/* Like/Dislike Buttons */
+.like-dislike-buttons {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.like-button, .dislike-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #1db954;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.like-button:hover, .dislike-button:hover {
+  background-color: #1aa04e;
+}
+
+.like-icon, .dislike-icon {
+  margin-right: 8px;
+}
+
 /* Comment Section */
 .comment-section {
   margin-top: 30px;
-  margin-bottom: 20px; /* Ensures it's not too close to the bottom */
 }
 
 .comment-input {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
   border-radius: 4px;
   border: 1px solid #333;
   background-color: #222;
   color: white;
-  height: 40px; /* Reduced height of the comment box */
-  resize: none;
-  font-size: 16px; /* Same font size as the rest of the text */
-  font-weight: normal; /* Same font weight as the rest of the text */
+  height: 100px;
 }
 
-.comment-input::placeholder {
-  color: #bbb; /* Placeholder color */
-  font-size: 16px; /* Same font size as other text */
-  font-weight: normal; /* Same font weight as the other text */
-  font-style: italic;
+/* Navigation Buttons */
+.navigation-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
 }
 
-.comment-input:focus {
-  border-color: #1db954;
-  outline: none;
-  background-color: #333;
+.home-button, .profile-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #1db954;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-.comment-input::-webkit-scrollbar {
-  width: 8px;
-}
-
-.comment-input::-webkit-scrollbar-thumb {
-  background-color: #888;
-  border-radius: 10px;
-}
-
-.comment-input::-webkit-scrollbar-thumb:hover {
-  background-color: #555;
+.home-button:hover, .profile-button:hover {
+  background-color: #1aa04e;
 }
 </style>
