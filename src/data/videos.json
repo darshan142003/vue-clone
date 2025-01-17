@@ -1,0 +1,24 @@
+[
+  {
+    "id": "1",
+    "title": "Video Title 1",
+    "creator": "Creator Name",
+    "views": 1200,
+    "likes": 15,
+    "comments": [
+      "Great video!",
+      "Very informative."
+    ]
+  },
+  {
+    "id": "2",
+    "title": "Video Title 2",
+    "creator": "Another Creator",
+    "views": 3000,
+    "likes": 25,
+    "comments": [
+      "Nice content!",
+      "I learned a lot!"
+    ]
+  }
+]
