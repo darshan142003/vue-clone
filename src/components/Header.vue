@@ -17,7 +17,7 @@
           viewBox="0 0 16 16"
         >
           <path
-            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.3 1.658a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"
+            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.3 1.658a5.5 5.5 0="
           />
         </svg>
       </button>
@@ -25,9 +25,13 @@
 
     <!-- Profile Section and Home Button -->
     <div class="buttons">
-      <!-- Only show home and profile buttons when showHomeProfile is true -->
+      <!-- Only show home button when showHomeProfile is true -->
       <button v-if="showHomeProfile" @click="emitHomeClicked" class="home-btn">Home</button>
-      <button class="profile-btn">Profile</button>
+
+      <!-- Profile button toggles name display -->
+      <button class="profile-btn" @click="toggleName">
+        {{ showName ? userName : 'Profile' }}
+      </button>
     </div>
   </div>
 </template>
@@ -40,11 +44,24 @@ export default {
       type: Boolean,
       required: true,
     },
+    userName: {
+      type: String,
+      default: 'Pranali DP', // Default name if no prop is passed
+    },
+  },
+  data() {
+    return {
+      showName: false, // Determines whether to show the user's name or "Profile"
+    };
   },
   methods: {
     // Emit an event to notify the parent component (App.vue) that the home button was clicked
     emitHomeClicked() {
       this.$emit('home-clicked');
+    },
+    // Toggles between showing "Profile" and the user's name
+    toggleName() {
+      this.showName = !this.showName;
     },
   },
 };
