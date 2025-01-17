@@ -1,11 +1,11 @@
 <template>
-  <div class="card">
+  <div class="card" @click="goToExtendedCard">
     <img :src="thumbnail" alt="Video thumbnail" class="thumbnail" />
     <div class="card-content">
       <h3>{{ title }}</h3>
-      <p class="views">{{ views }}</p>
+      <p class="views">{{ views }} views</p>
       <div class="card-footer">
-        <p class="channel">{{ channel }}</p>
+        <p class="channel">{{ creator.firstname }} {{ creator.lastname }}</p>
         <p class="description">{{ description }}</p>
       </div>
     </div>
@@ -16,6 +16,10 @@
 export default {
   name: 'Card',
   props: {
+    id: { // Add id prop
+      type: String,
+      required: true,
+    },
     thumbnail: {
       type: String,
       required: true,
@@ -25,16 +29,26 @@ export default {
       required: true,
     },
     views: {
-      type: String,
+      type: Number,
       required: true,
     },
-    channel: {
-      type: String,
+    creator: {
+      type: Object,
       required: true,
     },
     description: {
       type: String,
       required: true,
+    },
+  },
+  methods: {
+    // Handle redirect to the extended card view
+    goToExtendedCard() {
+      // Emit an event to notify the parent that the card was clicked
+      this.$emit('card-clicked');
+      
+      // Pass the video id to the router to navigate to the expanded view
+      this.$router.push({ name: 'extendedCard', params: { id: this.id } });
     },
   },
 };
@@ -47,12 +61,19 @@ export default {
   padding: 10px;
   border-radius: 8px;
   color: white;
-  gap: 15px; /* Increased gap for better spacing */
+  gap: 15px;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
 }
 
 .thumbnail {
-  width: 300px; /* Larger width */
-  height: 200px; /* Larger height */
+  width: 300px;
+  height: 200px;
   object-fit: cover;
   border-radius: 4px;
 }
@@ -65,7 +86,7 @@ export default {
 
 h3 {
   margin: 0;
-  font-size: 18px; /* Slightly larger font for title */
+  font-size: 18px;
 }
 
 .views {
@@ -74,8 +95,8 @@ h3 {
 }
 
 .card-footer {
-  margin-top: auto; /* Pushes the footer content down */
-  margin-bottom: 10px; /* Adds space from the bottom */
+  margin-top: auto;
+  margin-bottom: 10px;
 }
 
 .channel {
@@ -86,6 +107,6 @@ h3 {
 .description {
   font-size: 14px;
   color: #bbb;
-  margin-top: 5px; /* Added gap between channel and description */
+  margin-top: 5px;
 }
 </style>

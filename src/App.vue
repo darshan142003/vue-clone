@@ -1,20 +1,37 @@
 <template>
   <div id="app">
-    <Header />
-    <router-view />
-    <Footer /> <!-- Footer component placed here -->
+    <!-- Header with dynamic buttons -->
+    <Header :show-home-profile="showHomeProfile" @home-clicked="homeClicked" />
+    <router-view @expanded-card="onExpandedCard" /> <!-- Listen for expanded-card event -->
+    <Footer />
   </div>
 </template>
 
 <script>
 import Header from './components/Header.vue';
-import Footer from './components/Footer.vue'; // Import Footer component
+import Footer from './components/Footer.vue';
 
 export default {
   name: 'App',
   components: {
     Header,
-    Footer, // Register Footer component
+    Footer,
+  },
+  data() {
+    return {
+      showHomeProfile: false, // Track if Home and Profile buttons should be displayed
+    };
+  },
+  methods: {
+    // Method to update the header when an expanded card is shown
+    onExpandedCard() {
+      this.showHomeProfile = true; // Show Home and Profile buttons when expanded card is clicked
+    },
+    // Method to handle the home button click and redirect
+    homeClicked() {
+      this.showHomeProfile = false; // Hide the home button
+      this.$router.push({ name: 'home' }); // Navigate to the home page
+    },
   },
 };
 </script>

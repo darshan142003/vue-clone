@@ -1,46 +1,50 @@
 <template>
   <div class="profile">
-    <h2>Edit Profile</h2>
-    <form @submit.prevent="saveProfile">
-      <TextField v-model="userName" label="Full Name" />
-      <Button text="Save" />
-    </form>
+    <h1 class="profile-title">User Profile</h1>
+    <p class="user-name">Full Name: {{ fullName }}</p>
+    <!-- Other profile content -->
   </div>
 </template>
 
 <script>
-import TextField from './TextField.vue';
-import Button from './Button.vue';
-
 export default {
-  components: {
-    TextField,
-    Button
-  },
+  name: 'Profile',
   data() {
     return {
-      userName: ''
+      user: {
+        firstname: 'John',
+        lastname: 'Doe',
+        // Add more user data as needed
+      },
     };
   },
-  methods: {
-    saveProfile() {
-      alert(`Profile saved with name: ${this.userName}`);
-    }
-  }
+  computed: {
+    fullName() {
+      return `${this.user.firstname} ${this.user.lastname}`;
+    },
+  },
 };
 </script>
 
 <style scoped>
 .profile {
   padding: 20px;
-}
-
-form {
-  max-width: 500px;
+  background-color: #121212;
+  color: white;
+  max-width: 600px;
   margin: 0 auto;
+  border-radius: 8px;
 }
 
-h2 {
-  text-align: center;
+.profile-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+}
+
+.user-name {
+  font-size: 18px;
+  color: #bbb;
+  margin-top: 10px;
 }
 </style>

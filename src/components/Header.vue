@@ -23,9 +23,11 @@
       </button>
     </div>
 
-    <!-- Profile Section -->
-    <div class="profile-box">
-      <button>Profile</button>
+    <!-- Profile Section and Home Button -->
+    <div class="buttons">
+      <!-- Only show home and profile buttons when showHomeProfile is true -->
+      <button v-if="showHomeProfile" @click="emitHomeClicked" class="home-btn">Home</button>
+      <button class="profile-btn">Profile</button>
     </div>
   </div>
 </template>
@@ -33,6 +35,18 @@
 <script>
 export default {
   name: 'Header',
+  props: {
+    showHomeProfile: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  methods: {
+    // Emit an event to notify the parent component (App.vue) that the home button was clicked
+    emitHomeClicked() {
+      this.$emit('home-clicked');
+    },
+  },
 };
 </script>
 
@@ -105,7 +119,13 @@ export default {
   background-color: red;
 }
 
-.profile-box button {
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.home-btn,
+.profile-btn {
   padding: 8px 16px;
   background-color: transparent;
   color: white;
@@ -114,7 +134,8 @@ export default {
   border-radius: 5px;
 }
 
-.profile-box button:hover {
+.home-btn:hover,
+.profile-btn:hover {
   background-color: #555;
 }
 </style>
